@@ -9,7 +9,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import il.ac.huji.todolist.R;
 import il.ac.huji.todolist.data.TaskItem;
@@ -26,8 +29,6 @@ public class TaskAdapter extends BaseAdapter {
         this.activity = activity;
         this.taskItems = taskItems;
     }
-
-    private int[] colors = new int[] { R.color.even_tasks, R.color.odd_tasks };
 
     @Override
     public int getCount() {
@@ -54,13 +55,32 @@ public class TaskAdapter extends BaseAdapter {
 
         final TaskItem taskItem = taskItems.get(position);
 
-        TextView textView = (TextView) convertView.findViewById(R.id.textView);
-        textView.setText(taskItem.getTask());
-        if (position % 2 == 1) {
-            textView.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.odd_tasks));
+        TextView textViewTask = (TextView) convertView.findViewById(R.id.txtTodoTitle);
+        textViewTask.setText(taskItem.getTask());
+
+        TextView textViewDate = (TextView) convertView.findViewById(R.id.txtTodoDueDate);
+        Date date = taskItem.getDate();
+        StringBuilder taskDate = new StringBuilder();
+                taskDate.append((String) android.text.format.DateFormat.format("dd", date));
+                taskDate.append("/");
+                taskDate.append((String) android.text.format.DateFormat.format("MM", date));
+                taskDate.append("/");
+                taskDate.append((String) android.text.format.DateFormat.format("yyyy", date));
+        textViewDate.setText(taskDate);
+
+        Calendar nowTime = Calendar.getInstance();
+        nowTime.set(Calendar.HOUR_OF_DAY, 0);
+        nowTime.set(Calendar.MINUTE, 0);
+        nowTime.set(Calendar.SECOND, 0);
+        nowTime.set(Calendar.MILLISECOND, 0);
+        if (taskItem.getDate().before(nowTime.getTime())) {
+            textViewTask.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.overdue_tasks));
+            textViewDate.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.overdue_tasks));
         } else {
-            textView.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.even_tasks));
+            textViewTask.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.ongoing_tasks));
+            textViewDate.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.ongoing_tasks));
         }
+
         return convertView;
     }
 }

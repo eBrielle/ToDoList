@@ -9,22 +9,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="il.ac.huji.todolist.ToDoListManagerActivity">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:gravity="center_horizontal"
-        android:textSize="@dimen/task_input_text_size"
-        android:hint="@string/task_input_hint" />
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/listView"
         android:gravity="center_horizontal"
-        android:layout_below="@id/editText"
-        android:paddingTop="@dimen/task_list_top_padding"/>
+        android:layout_marginTop="@dimen/task_list_top_margin"/>
 
 </RelativeLayout>

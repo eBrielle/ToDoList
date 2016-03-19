@@ -2,7 +2,8 @@
     <string name="app_name">ToDoList</string>
     <string name="task_input_hint">Enter a task</string>
     <string name="add">Add a task</string>
-    <string name="deleteTitle">Did you really finish the task: </string>
-    <string name="deleteYes">Done! Delete.</string>
-    <string name="deleteNo">Jk. Let\'s keep it on the list.</string>
+    <string name="addOK">OK</string>
+    <string name="addCancel">Cancel</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_call">Call</string>
 </resources>

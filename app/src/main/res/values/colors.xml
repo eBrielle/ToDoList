@@ -8,4 +8,8 @@
     <!--<color name="colorAccent">#FF4081</color>-->
     <color name="even_tasks">#00695C</color>
     <color name="odd_tasks">#1DE9B6</color>
+    <color name="overdue_tasks">#CF233A</color>
+    <color name="ongoing_tasks">#000000</color>
+    <color name="dialog_foreground">#FF000000</color>
+    <color name="dialog_background">#FFF2F2F2</color>
 </resources>
