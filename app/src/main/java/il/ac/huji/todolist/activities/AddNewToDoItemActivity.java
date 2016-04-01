@@ -1,28 +1,19 @@
-package il.ac.huji.todolist;
+package il.ac.huji.todolist.activities;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import il.ac.huji.todolist.adapters.TaskAdapter;
-import il.ac.huji.todolist.data.TaskItem;
+import il.ac.huji.todolist.R;
 
 public class AddNewToDoItemActivity extends Activity {
-    private int currentYear;
-    private int currentMonth;
-    private int currentDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +23,9 @@ public class AddNewToDoItemActivity extends Activity {
         final EditText editText = (EditText) findViewById(R.id.editText);
 
         final Calendar c = Calendar.getInstance();
-        currentYear = c.get(Calendar.YEAR);
-        currentMonth = c.get(Calendar.MONTH);
-        currentDay = c.get(Calendar.DAY_OF_MONTH);
+        int currentYear = c.get(Calendar.YEAR);
+        int currentMonth = c.get(Calendar.MONTH);
+        int currentDay = c.get(Calendar.DAY_OF_MONTH);
 
         final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
         datePicker.updateDate(currentYear, currentMonth, currentDay);
@@ -55,8 +46,9 @@ public class AddNewToDoItemActivity extends Activity {
                 if(editText.getText().toString().trim().length() > 0) {
                     long dateTime = datePicker.getCalendarView().getDate();
                     Date date = new Date(dateTime);
+                    String task = editText.getText().toString();
                     Intent result = new Intent();
-                    result.putExtra("task_name", editText.getText().toString());
+                    result.putExtra("task_name", task);
                     result.putExtra("task_date", date.getTime());
                     setResult(RESULT_OK, result);
                 }

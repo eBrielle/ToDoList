@@ -8,18 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
-
 import il.ac.huji.todolist.R;
 import il.ac.huji.todolist.data.TaskItem;
 
-/**
- * Created by esther on 09/03/2016.
- */
 public class TaskAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
@@ -51,7 +43,7 @@ public class TaskAdapter extends BaseAdapter {
             inflater = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
-            convertView = inflater.inflate(R.layout.task_item, null);
+            convertView = inflater.inflate(R.layout.task_item, parent, false);
 
         final TaskItem taskItem = taskItems.get(position);
 
@@ -59,7 +51,7 @@ public class TaskAdapter extends BaseAdapter {
         textViewTask.setText(taskItem.getTask());
 
         TextView textViewDate = (TextView) convertView.findViewById(R.id.txtTodoDueDate);
-        Date date = taskItem.getDate();
+        Long date = taskItem.getDate();
         StringBuilder taskDate = new StringBuilder();
                 taskDate.append((String) android.text.format.DateFormat.format("dd", date));
                 taskDate.append("/");
@@ -68,12 +60,12 @@ public class TaskAdapter extends BaseAdapter {
                 taskDate.append((String) android.text.format.DateFormat.format("yyyy", date));
         textViewDate.setText(taskDate);
 
-        Calendar nowTime = Calendar.getInstance();
-        nowTime.set(Calendar.HOUR_OF_DAY, 0);
-        nowTime.set(Calendar.MINUTE, 0);
-        nowTime.set(Calendar.SECOND, 0);
-        nowTime.set(Calendar.MILLISECOND, 0);
-        if (taskItem.getDate().before(nowTime.getTime())) {
+//        Calendar nowTime = Calendar.getInstance();
+//        nowTime.set(Calendar.HOUR_OF_DAY, 0);
+//        nowTime.set(Calendar.MINUTE, 0);
+//        nowTime.set(Calendar.SECOND, 0);
+//        nowTime.set(Calendar.MILLISECOND, 0);
+        if (System.currentTimeMillis() > date) {
             textViewTask.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.overdue_tasks));
             textViewDate.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.overdue_tasks));
         } else {

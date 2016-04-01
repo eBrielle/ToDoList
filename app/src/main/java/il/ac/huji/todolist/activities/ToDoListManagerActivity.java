@@ -1,4 +1,4 @@
-package il.ac.huji.todolist;
+package il.ac.huji.todolist.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,12 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import il.ac.huji.todolist.R;
+import il.ac.huji.todolist.adapters.DBCursorAdapter;
 import il.ac.huji.todolist.adapters.TaskAdapter;
 import il.ac.huji.todolist.data.TaskItem;
 
@@ -24,13 +25,18 @@ public class ToDoListManagerActivity extends AppCompatActivity {
 
     private List<TaskItem> taskItems;
     private TaskAdapter taskAdapter;
+    private DBCursorAdapter dbCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do_list_manager);
+
+        dbCursorAdapter = new DBCursorAdapter(this);
+        dbCursorAdapter.open();
+
         final ListView listView = (ListView) findViewById(R.id.listView);
-        taskItems = new ArrayList<>();
+        taskItems = dbCursorAdapter.getAllTasks();
         taskAdapter = new TaskAdapter(ToDoListManagerActivity.this,taskItems);
         listView.setAdapter(taskAdapter);
         registerForContextMenu(listView);
@@ -40,14 +46,11 @@ public class ToDoListManagerActivity extends AppCompatActivity {
         if(resCode != RESULT_CANCELED){
             switch (reqCode) {
                 case 1:
-                    final TaskItem taskItem = new TaskItem();
-                    String task_name = addGo.getStringExtra("task_name");
-                    Date date = new Date();
-                    date.setTime(addGo.getLongExtra("task_date", -1));
-                    taskItem.setTask(task_name);
-                    taskItem.setDate(date);
+                    dbCursorAdapter.open();
+                    TaskItem taskItem = dbCursorAdapter.createTaskItem(addGo.getStringExtra("task_name"),addGo.getLongExtra("task_date", -1));
                     taskItems.add(taskItem);
                     taskAdapter.notifyDataSetChanged();
+                    break;
             }
         }
     }
@@ -69,13 +72,18 @@ public class ToDoListManagerActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        TaskItem taskItem;
         switch(item.getItemId()) {
             case R.id.menuItemDelete:
-                taskItems.remove(info.position);
+                if (taskAdapter.getCount() > 0) {
+                    taskItem = taskItems.get(info.position);
+                    dbCursorAdapter.deleteTaskItem(taskItem);
+                    taskItems.remove(info.position);
+                }
                 taskAdapter.notifyDataSetChanged();
                 return true;
             case R.id.menuItemCall:
-                TaskItem taskItem = taskItems.get(info.position);
+                taskItem = taskItems.get(info.position);
                 Pattern pattern = Pattern.compile("\\*?\\(?(\\d{1,3})\\)?[- ]?(\\d{1,3})[- ]?(\\d{1,4})");
                 Matcher matcher = pattern.matcher(taskItem.getTask());
                 if (matcher.find()) {
@@ -102,11 +110,24 @@ public class ToDoListManagerActivity extends AppCompatActivity {
         listView.setAdapter(taskAdapter);
         switch (item.getItemId()) {
             case R.id.add:
+                dbCursorAdapter.close();
                 Intent addGo = new Intent(getApplicationContext(), AddNewToDoItemActivity.class);
                 startActivityForResult(addGo, 1);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        dbCursorAdapter.open();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        dbCursorAdapter.close();
+        super.onPause();
     }
 }
