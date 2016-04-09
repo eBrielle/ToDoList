@@ -32,6 +32,15 @@ public class DBCursorAdapter {
         helper.close();
     }
 
+    public Long getCount() {
+        String countQuery = "SELECT  * FROM " + DBHelper.TABLE_TODO;
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int cnt = cursor.getCount();
+        cursor.close();
+        return (long) cnt;
+    }
+
     public TaskItem createTaskItem(String title, Long due) {
         ContentValues values = new ContentValues();
         values.put(DBHelper.COLUMN_TITLE, title);
@@ -54,18 +63,20 @@ public class DBCursorAdapter {
                 + " = " + id, null);
     }
 
-    public List<TaskItem> getAllTasks() {
+    public List<TaskItem> getAllTasksIterated(Long first, Long last) {
         List<TaskItem> taskItems = new ArrayList<>();
 
         Cursor cursor = db.query(DBHelper.TABLE_TODO,
                 allColumns, null, null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            TaskItem taskItem = cursorToTaskItem(cursor);
-            taskItems.add(taskItem);
-            cursor.moveToNext();
-        }
+        cursor.moveToPosition(first.intValue());
+            for (Long l=first; l<=last; l++) {
+                if (!cursor.isAfterLast()) {
+                    TaskItem taskItem = cursorToTaskItem(cursor);
+                    taskItems.add(taskItem);
+                    cursor.moveToNext();
+                }
+            }
         cursor.close();
         return taskItems;
     }
